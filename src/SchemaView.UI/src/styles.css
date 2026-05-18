@@ -1,1 +1,42 @@
 @import 'tailwindcss';
+@import 'tailwindcss-primeui';
+@import 'primeicons/primeicons.css';
+@custom-variant dark (&:where(.dark-selector, .dark-selector *));
+
+html {
+  font-family: 'Inter', sans-serif;
+}
+
+.layout-tooltip .p-tooltip-text {
+  @apply bg-surface-950 dark:bg-surface-0 text-surface-50 dark:text-surface-950 px-3 py-1.5 rounded-md shadow-lg text-xs;
+}
+
+.layout-tooltip.p-tooltip-right .p-tooltip-arrow {
+  border-right-color: var(--p-primary-color);
+}
+
+.scrollbar-stable {
+  scrollbar-gutter: stable;
+}
+
+.thin-scrollbar {
+  scrollbar-width: thin;
+}
+
+.thin-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.thin-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.thin-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.35);
+  border-radius: 999px;
+}
+
+:root {
+  --ng-progress-color: var(--p-primary-color);
+  --ng-progress-thickness: 3;
+}
