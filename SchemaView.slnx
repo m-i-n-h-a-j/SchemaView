@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/SchemaView.API/SchemaView.API.csproj" />
+    <Project Path="src/SchemaView.Application/SchemaView.Application.csproj" />
+    <Project Path="src/SchemaView.Domain/SchemaView.Domain.csproj" />
+    <Project Path="src/SchemaView.Infrastructure/SchemaView.Infrastructure.csproj" />
+    <Project Path="src/SchemaView.UI/SchemaView.UI.esproj">
+      <Build />
+    </Project>
+  </Folder>
+</Solution>
