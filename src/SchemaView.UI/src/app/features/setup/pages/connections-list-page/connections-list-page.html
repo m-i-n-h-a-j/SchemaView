@@ -1,0 +1,147 @@
+<div class="min-h-screen bg-stone-950 text-stone-100 p-4 sm:p-8 font-sans">
+  <div class="max-w-4xl mx-auto space-y-8">
+    <!-- Header -->
+    <div
+      class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-stone-800"
+    >
+      <div>
+        <h1 class="text-2xl font-bold text-white tracking-tight flex items-center gap-3.5">
+          <app-icon-component
+            [path]="icons.database"
+            [size]="6"
+            class="text-blue-500"
+          ></app-icon-component>
+          Saved Connections
+        </h1>
+        <p class="text-sm text-stone-400 mt-1">
+          Manage and connect to your configured database instances.
+        </p>
+      </div>
+      <div>
+        <app-button-component
+          label="Add Connection"
+          variant="primary"
+          (click)="goToAddConnection()"
+          class="sm:w-auto"
+        ></app-button-component>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    @if (connectionService.connections().length === 0) {
+      <div
+        class="flex flex-col items-center justify-center text-center p-12 bg-stone-900 border border-stone-800 rounded-xl space-y-4"
+      >
+        <div
+          class="w-16 h-16 bg-stone-950 border border-stone-800 rounded-2xl flex items-center justify-center text-stone-550"
+        >
+          <app-icon-component
+            [path]="icons.database"
+            [size]="8"
+            class="text-stone-500"
+          ></app-icon-component>
+        </div>
+        <div class="space-y-1">
+          <h3 class="text-lg font-semibold text-white">No saved connections</h3>
+          <p class="text-sm text-stone-400 max-w-sm">
+            Get started by creating your first PostgreSQL database connection.
+          </p>
+        </div>
+        <div class="pt-2">
+          <app-button-component
+            label="Create Connection"
+            variant="primary"
+            (click)="goToAddConnection()"
+          ></app-button-component>
+        </div>
+      </div>
+    } @else {
+      <!-- Connection List Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        @for (conn of connectionService.connections(); track conn.id) {
+          <div
+            class="bg-stone-900 border border-stone-800 rounded-xl p-5 space-y-4 shadow-lg hover:shadow-[0_10px_30px_rgba(0,0,0,0.3)] transition duration-200"
+          >
+            <!-- Connection Header -->
+            <div class="flex items-start justify-between">
+              <div class="flex items-center gap-3">
+                <div
+                  class="w-10 h-10 bg-stone-950 border border-stone-800 rounded-lg flex items-center justify-center text-blue-500"
+                >
+                  <app-icon-component [path]="icons.database" [size]="5"></app-icon-component>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-white text-base leading-tight">{{ conn.name }}</h3>
+                  <span
+                    class="inline-flex items-center px-2 py-0.5 mt-1 rounded text-[10px] font-medium bg-stone-950 text-stone-400 border border-stone-800 uppercase"
+                  >
+                    {{ conn.provider }}
+                  </span>
+                </div>
+              </div>
+              <button
+                (click)="deleteConnection(conn.id)"
+                class="p-1.5 bg-stone-950 border border-stone-800 hover:border-red-500/30 hover:bg-red-950/20 text-stone-400 hover:text-red-400 rounded-lg transition-colors duration-150 focus:outline-none"
+                title="Delete Connection"
+              >
+                <app-icon-component [path]="icons.delete" [size]="4.5"></app-icon-component>
+              </button>
+            </div>
+
+            <!-- Connection Details Info -->
+            <div class="grid grid-cols-2 gap-y-3 gap-x-4 pt-2 border-t border-stone-800/60 text-xs">
+              <div>
+                <span class="text-stone-500 block font-medium uppercase tracking-wider mb-0.5"
+                  >Host / IP</span
+                >
+                <span class="text-stone-300 font-mono">{{ conn.host }}:{{ conn.port }}</span>
+              </div>
+              <div>
+                <span class="text-stone-500 block font-medium uppercase tracking-wider mb-0.5"
+                  >Database</span
+                >
+                <span class="text-stone-300">{{ conn.database }}</span>
+              </div>
+              <div>
+                <span class="text-stone-500 block font-medium uppercase tracking-wider mb-0.5"
+                  >Username</span
+                >
+                <span class="text-stone-300">{{ conn.username }}</span>
+              </div>
+              <div>
+                <span class="text-stone-500 block font-medium uppercase tracking-wider mb-0.5"
+                  >Security</span
+                >
+                <span
+                  class="inline-flex items-center gap-1 mt-0.5"
+                  [class.text-blue-400]="conn.ssl"
+                  [class.text-stone-400]="!conn.ssl"
+                >
+                  <app-icon-component
+                    [path]="conn.ssl ? icons.lock : icons.lock_open"
+                    [size]="3.5"
+                    class="text-stone-400"
+                  ></app-icon-component>
+                  {{ conn.ssl ? 'SSL Enabled' : 'No SSL' }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Card Actions -->
+            <div
+              class="flex items-center justify-between pt-3 border-t border-stone-800/60 text-[10px] text-stone-500"
+            >
+              <span>Added: {{ conn.createdAt | date: 'short' }}</span>
+              <button
+                class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white font-semibold text-xs rounded-md transition duration-150 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              >
+                Connect
+                <app-icon-component [path]="icons.arrow_forward" [size]="3.5"></app-icon-component>
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>
