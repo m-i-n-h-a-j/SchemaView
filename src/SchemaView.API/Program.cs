@@ -4,22 +4,16 @@ using SchemaView.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-#region CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(
-        "AllowClients",
+        "AllowAll",
         policy =>
         {
-            policy
-                .WithOrigins("http://localhost:4200")
-                .AllowAnyHeader()
-                .AllowAnyMethod()
-                .AllowCredentials();
+            policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
         }
     );
 });
-#endregion
 
 builder
     .Services.AddControllers()
@@ -43,7 +37,7 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
-app.UseCors("AllowClients");
+app.UseCors("AllowAll");
 app.UseDefaultFiles();
 app.UseStaticFiles();
 app.UseAuthorization();
