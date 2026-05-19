@@ -3,6 +3,7 @@ import { FormGroup, FormControl, Validators, ReactiveFormsModule } from '@angula
 import { Router } from '@angular/router';
 import { ConnectionService } from '../../../../services/connection/connection-service';
 import { PopUpService } from '../../../../services/pop-up/pop-up-service';
+import { MessageService } from 'primeng/api';
 import { ButtonComponent } from '../../../../shared/components/button-component/button-component';
 
 @Component({
@@ -16,6 +17,7 @@ export class AddDbComponent {
 
   private connectionService = inject(ConnectionService);
   private popUpService = inject(PopUpService);
+  private messageService = inject(MessageService);
   private router = inject(Router);
 
   protected connection = new FormGroup({
@@ -50,6 +52,12 @@ export class AddDbComponent {
     this.connection.reset({
       port: 5432,
       ssl: true,
+    });
+
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: 'New connection added successfully',
     });
 
     this.popUpService.closeAddDbConnectionPopUp();

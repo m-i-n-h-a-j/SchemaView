@@ -4,7 +4,7 @@
 @custom-variant dark (&:where(.dark-selector, .dark-selector *));
 
 html {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Manrope', sans-serif;
 }
 
 .layout-tooltip .p-tooltip-text {
