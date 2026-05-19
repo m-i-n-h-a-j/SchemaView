@@ -3,25 +3,36 @@ import { Router } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { ConnectionService } from '../../../../services/connection/connection-service';
 import { ThemeService } from '../../../../services/theme/theme-service';
+import { PopUpService } from '../../../../services/pop-up/pop-up-service';
 import { ButtonComponent } from '../../../../shared/components/button-component/button-component';
 import { IconComponent } from '../../../../shared/components/icon-component/icon-component';
 import { APP_ICONS } from '../../../../shared/models/constants/icons';
+import { ConnectionCardComponent } from '../../components/connection-card/connection-card';
+import { PopUpComponent } from '../../../../shared/components/pop-up-component/pop-up-component';
+import { AddDbComponent } from '../../components/add-db-component/add-db-component';
 
 @Component({
   selector: 'app-connections-list-page',
-  imports: [ButtonComponent, IconComponent, DatePipe],
+  imports: [
+    ButtonComponent,
+    IconComponent,
+    ConnectionCardComponent,
+    PopUpComponent,
+    AddDbComponent,
+  ],
   templateUrl: './connections-list-page.html',
   styleUrl: './connections-list-page.css',
 })
 export class ConnectionsListPage {
   protected connectionService = inject(ConnectionService);
   protected themeService = inject(ThemeService);
+  protected popUpService = inject(PopUpService);
   private router = inject(Router);
 
   protected readonly icons = APP_ICONS;
 
   protected goToAddConnection() {
-    this.router.navigate(['/'], { queryParams: { add: 'true' } });
+    this.popUpService.showAddDbConnectionPopUp();
   }
 
   protected deleteConnection(id: string) {

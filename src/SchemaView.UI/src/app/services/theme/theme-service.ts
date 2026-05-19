@@ -221,8 +221,6 @@ export class ThemeService {
 
   private systemThemeListener = (e: MediaQueryListEvent) => {
     if (this.themeState().darkMode === 'system') {
-      console.log(e.matches);
-
       if (e.matches) {
         document.documentElement.classList.add('dark-selector');
         updateSurfacePalette(this.surfaces['neutral']);

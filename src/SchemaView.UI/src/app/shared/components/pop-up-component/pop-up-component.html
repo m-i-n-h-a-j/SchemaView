@@ -1,0 +1,21 @@
+<p-dialog
+  maskStyleClass="backdrop-blur-[1px]"
+  [visible]="visible()"
+  (visibleChange)="visibleChange.emit($event)"
+  styleClass="border-0! bg-transparent!"
+  [modal]="true"
+>
+  <ng-template #headless>
+    <div
+      class="flex flex-col relative rounded-border overflow-hidden min-w-fit sm:min-w-sm lg:min-w-md xl:min-w-120 transition-all max-w-[95vw] max-h-[90vh] bg-surface-0 dark:bg-surface-950 dark:border border-surface-900"
+    >
+      <div
+        (click)="close()"
+        class="absolute flex items-center justify-center top-6 right-6 size-10 shrink-0 p-1.75 rounded-full bg-primary-500/10 backdrop-blur-xs border border-primary-500/10 hover:border-primary-200 hover:dark:border-primary-950 cursor-pointer"
+      >
+        <app-icon-component class="text-muted-color" [path]="ICONS.close" />
+      </div>
+      <ng-content />
+    </div>
+  </ng-template>
+</p-dialog>

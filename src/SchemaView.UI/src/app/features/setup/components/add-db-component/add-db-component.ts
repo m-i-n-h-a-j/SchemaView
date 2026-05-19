@@ -1,7 +1,8 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { FormGroup, FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ConnectionService } from '../../../../services/connection/connection-service';
+import { PopUpService } from '../../../../services/pop-up/pop-up-service';
 import { ButtonComponent } from '../../../../shared/components/button-component/button-component';
 
 @Component({
@@ -11,7 +12,10 @@ import { ButtonComponent } from '../../../../shared/components/button-component/
   styleUrl: './add-db-component.css',
 })
 export class AddDbComponent {
+  isCard = input(true);
+
   private connectionService = inject(ConnectionService);
+  private popUpService = inject(PopUpService);
   private router = inject(Router);
 
   protected connection = new FormGroup({
@@ -48,6 +52,7 @@ export class AddDbComponent {
       ssl: true,
     });
 
+    this.popUpService.closeAddDbConnectionPopUp();
     this.router.navigate(['/connections']);
   }
 }
