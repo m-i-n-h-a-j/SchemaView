@@ -5,6 +5,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="MediatR" Version="14.1.0" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\SchemaView.Domain\SchemaView.Domain.csproj" />
   </ItemGroup>
 </Project>
