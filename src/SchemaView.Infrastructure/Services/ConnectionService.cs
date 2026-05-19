@@ -1,4 +1,5 @@
 using Npgsql;
+using Oracle.ManagedDataAccess.Client;
 using SchemaView.Application.DTOs;
 using SchemaView.Application.Enums;
 using SchemaView.Application.Interfaces;
@@ -8,25 +9,54 @@ namespace SchemaView.Infrastructure.Services
 {
     public class ConnectionService : IConnectionService
     {
-
-
         public async Task<Result> TestConnectionAsync(DatabaseConnectionDto request)
         {
             try
             {
-                var builder = new NpgsqlConnectionStringBuilder
+                var connectionString = BuildConnectionString(request);
+
+                return request.Provider switch
                 {
-                    Host = request.Host,
-                    Port = request.Port,
-                    Database = request.Database,
-                    Username = request.Username,
-                    Password = request.Password,
-                    SslMode = request.Ssl ? SslMode.Require : SslMode.Disable,
+                    DatabaseProvider.PostgreSql => await TestPostgreSqlConnectionAsync(
+                        connectionString
+                    ),
+                    DatabaseProvider.Oracle => (Result)
+                        await TestOracleConnectionAsync(connectionString),
+                    _ => Result.Failure(
+                        new Error(
+                            "General.Validation",
+                            $"Provider '{request.Provider}' is not supported."
+                        )
+                    ),
                 };
+            }
+            catch (Exception ex)
+            {
+                return Result.Failure(new Error("General.Validation", ex.Message));
+            }
+        }
 
-                await using var connection = new NpgsqlConnection(builder.ConnectionString);
+        private static async Task<Result> TestPostgreSqlConnectionAsync(string connectionString)
+        {
+            try
+            {
+                await using var conn = new NpgsqlConnection(connectionString);
+                await conn.OpenAsync();
+                return Result.Success();
+            }
+            catch (Exception ex)
+            {
+                return Result.Failure(new Error("General.Validation", ex.Message));
+            }
+        }
 
-                await connection.OpenAsync();
+        public static async Task<Result> TestOracleConnectionAsync(string connectionString)
+        {
+            try
+            {
+                await using var conn = new OracleConnection(connectionString);
+
+                await conn.OpenAsync();
 
                 return Result.Success();
             }
@@ -46,13 +76,15 @@ namespace SchemaView.Infrastructure.Services
 
                 DatabaseProvider.MySql => string.Empty,
 
+                DatabaseProvider.Oracle => BuildOracleConnectionString(request),
+
                 _ => throw new NotSupportedException(
-                    $"Provider '{request.Provider}' is not supported.")
+                    $"Provider '{request.Provider}' is not supported."
+                ),
             };
         }
 
-        private static string BuildPostgreSqlConnectionString(
-            DatabaseConnectionDto request)
+        private static string BuildPostgreSqlConnectionString(DatabaseConnectionDto request)
         {
             var builder = new NpgsqlConnectionStringBuilder
             {
@@ -61,9 +93,22 @@ namespace SchemaView.Infrastructure.Services
                 Database = request.Database,
                 Username = request.Username,
                 Password = request.Password,
-                SslMode = request.Ssl
-                    ? SslMode.Require
-                    : SslMode.Disable,
+                SslMode = request.Ssl ? SslMode.Require : SslMode.Disable,
+            };
+
+            return builder.ConnectionString;
+        }
+
+        private static string BuildOracleConnectionString(DatabaseConnectionDto request)
+        {
+            var builder = new OracleConnectionStringBuilder
+            {
+                UserID = request.Username,
+                Password = request.Password,
+                DataSource =
+                    $"(DESCRIPTION="
+                    + $"(ADDRESS=(PROTOCOL=TCP)(HOST={request.Host})(PORT={request.Port}))"
+                    + $"(CONNECT_DATA=(SID={request.Database})))",
             };
 
             return builder.ConnectionString;

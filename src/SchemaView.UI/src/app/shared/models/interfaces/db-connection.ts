@@ -1,7 +1,7 @@
 export interface DatabaseConnection {
   id: string;
   name: string;
-  provider: 'postgresql';
+  provider: 'postgresql' | 'sqlserver' | 'mysql' | 'oracle';
   host: string;
   port: number;
   database: string;
