@@ -240,6 +240,7 @@
         label="Test & Save Connection"
         type="submit"
         [disabled]="connection.invalid"
+        [loading]="isSaving()"
       ></app-button-component>
     </div>
   </form>

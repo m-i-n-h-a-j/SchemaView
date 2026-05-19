@@ -1,4 +1,4 @@
-import { Component, inject, input } from '@angular/core';
+import { Component, inject, input, signal } from '@angular/core';
 import { FormGroup, FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ConnectionService } from '../../../../services/connection/connection-service';
@@ -28,6 +28,8 @@ export class AddDbComponent {
   private popUpService = inject(PopUpService);
   private messageService = inject(MessageService);
   private router = inject(Router);
+
+  isSaving = signal(false);
 
   protected connection = new FormGroup({
     provider: new FormControl<'postgresql' | 'sqlserver' | 'mysql' | 'oracle'>(
@@ -79,6 +81,8 @@ export class AddDbComponent {
       ssl: formValue.ssl ?? false,
     };
 
+    this.isSaving.set(true);
+
     this.connectionService.testConnection(req).subscribe({
       next: () => {
         this.connectionService.addDb(req);
@@ -94,8 +98,11 @@ export class AddDbComponent {
           summary: 'Success',
           detail: 'New connection added successfully',
         });
+
+        this.isSaving.set(false);
       },
       error: (error) => {
+        this.isSaving.set(false);
         const errorMessage = error.error.message
           ? error.error.message
           : 'Failed to connect to the database. Please check the connection details.';
