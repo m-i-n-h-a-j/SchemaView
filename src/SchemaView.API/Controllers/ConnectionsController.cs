@@ -9,7 +9,7 @@ namespace SchemaView.API.Controllers
     public class ConnectionsController(IConnectionService connectionService) : ApiControllerBase
     {
         [HttpPost("test")]
-        public async Task<IActionResult> TestConnection([FromBody] TestConnectionRequestDto request)
+        public async Task<IActionResult> TestConnection([FromBody] DatabaseConnectionDto request)
         {
             var result = await connectionService.TestConnectionAsync(request);
             return HandleResult(result);

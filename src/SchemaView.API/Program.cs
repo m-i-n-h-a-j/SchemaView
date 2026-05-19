@@ -31,6 +31,7 @@ builder
     });
 builder.Services.AddOpenApi();
 builder.Services.AddScoped<IConnectionService, ConnectionService>();
+builder.Services.AddScoped<IDatabaseProvider, PostgreSqlProviderService>();
 
 var app = builder.Build();
 
