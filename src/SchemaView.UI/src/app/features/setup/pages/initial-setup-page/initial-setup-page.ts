@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { ConnectionService } from '../../../../services/connection/connection-service';
 import { ThemeService } from '../../../../services/theme/theme-service';
 import { AddDbComponent } from '../../components/add-db-component/add-db-component';
@@ -16,7 +16,6 @@ export class InitialSetupPage implements OnInit {
   protected connectionService = inject(ConnectionService);
   protected themeService = inject(ThemeService);
   private router = inject(Router);
-  private route = inject(ActivatedRoute);
 
   protected readonly icons = APP_ICONS;
 
@@ -25,8 +24,7 @@ export class InitialSetupPage implements OnInit {
   }
 
   ngOnInit() {
-    const isAdding = this.route.snapshot.queryParamMap.has('add');
-    if (this.connectionService.connections().length > 0 && !isAdding) {
+    if (!this.isFirstConnection) {
       this.router.navigate(['/connections']);
     }
   }

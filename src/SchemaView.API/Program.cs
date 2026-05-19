@@ -4,6 +4,23 @@ using SchemaView.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+#region CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(
+        "AllowClients",
+        policy =>
+        {
+            policy
+                .WithOrigins("http://localhost:4200")
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials();
+        }
+    );
+});
+#endregion
+
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddScoped<IConnectionService, ConnectionService>();
@@ -16,7 +33,7 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
-app.UseHttpsRedirection();
+app.UseCors("AllowClients");
 app.UseAuthorization();
 app.MapControllers();
 app.Run();

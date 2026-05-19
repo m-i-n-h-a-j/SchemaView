@@ -1,5 +1,7 @@
-import { Injectable, signal } from '@angular/core';
+import { inject, Injectable, OnInit, signal } from '@angular/core';
 import { DatabaseConnection } from '../../shared/models/interfaces/db-connection';
+import { ApiService } from '../api/api-service';
+import { ServiceUrl } from '../../shared/models/enums/serviceUrl';
 
 @Injectable({
   providedIn: 'root',
@@ -7,6 +9,7 @@ import { DatabaseConnection } from '../../shared/models/interfaces/db-connection
 export class ConnectionService {
   private dbConnections = signal<DatabaseConnection[]>([]);
   readonly connections = this.dbConnections.asReadonly();
+  private apiService = inject(ApiService);
 
   constructor() {
     this.dbConnections.set(this.getAllConnections());
@@ -44,5 +47,9 @@ export class ConnectionService {
     this.dbConnections.set(updatedConnections);
 
     console.log('Deleted:', id);
+  }
+
+  testConnection(connection: Omit<DatabaseConnection, 'id' | 'createdAt'>) {
+    return this.apiService.post(ServiceUrl.ApiServer, 'connections/test', connection);
   }
 }
