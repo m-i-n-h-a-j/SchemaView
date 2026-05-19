@@ -1,6 +1,4 @@
 import { Component, inject } from '@angular/core';
-import { Router } from '@angular/router';
-import { DatePipe } from '@angular/common';
 import { ConnectionService } from '../../../../services/connection/connection-service';
 import { ThemeService } from '../../../../services/theme/theme-service';
 import { PopUpService } from '../../../../services/pop-up/pop-up-service';
@@ -22,12 +20,14 @@ import { AddDbComponent } from '../../components/add-db-component/add-db-compone
   ],
   templateUrl: './connections-list-page.html',
   styleUrl: './connections-list-page.css',
+  host: {
+    class: 'block min-w-0',
+  },
 })
 export class ConnectionsListPage {
   protected connectionService = inject(ConnectionService);
   protected themeService = inject(ThemeService);
   protected popUpService = inject(PopUpService);
-  private router = inject(Router);
 
   protected readonly icons = APP_ICONS;
 

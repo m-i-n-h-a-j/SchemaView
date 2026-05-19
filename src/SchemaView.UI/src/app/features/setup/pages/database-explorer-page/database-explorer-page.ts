@@ -17,6 +17,9 @@ import { TableDataViewerComponent } from '../../components/table-data-viewer/tab
   imports: [IconComponent, RouterLink, FormsModule, TableDataViewerComponent],
   templateUrl: './database-explorer-page.html',
   styleUrl: './database-explorer-page.css',
+  host: {
+    class: 'block min-w-0',
+  },
 })
 export class DatabaseExplorerPage implements OnInit {
   private route = inject(ActivatedRoute);

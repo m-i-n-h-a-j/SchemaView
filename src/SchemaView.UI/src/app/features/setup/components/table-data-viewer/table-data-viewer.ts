@@ -9,6 +9,9 @@ import { APP_ICONS } from '../../../../shared/models/constants/icons';
   imports: [IconComponent],
   templateUrl: './table-data-viewer.html',
   styleUrl: './table-data-viewer.css',
+  host: {
+    class: 'flex flex-1 min-h-0 min-w-0 w-full',
+  },
 })
 export class TableDataViewerComponent {
   private databaseService = inject(DatabaseService);
