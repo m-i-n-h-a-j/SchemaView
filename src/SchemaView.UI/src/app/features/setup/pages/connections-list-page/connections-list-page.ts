@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { ConnectionService } from '../../../../services/connection/connection-service';
+import { ThemeService } from '../../../../services/theme/theme-service';
 import { ButtonComponent } from '../../../../shared/components/button-component/button-component';
 import { IconComponent } from '../../../../shared/components/icon-component/icon-component';
 import { APP_ICONS } from '../../../../shared/models/constants/icons';
@@ -14,6 +15,7 @@ import { APP_ICONS } from '../../../../shared/models/constants/icons';
 })
 export class ConnectionsListPage {
   protected connectionService = inject(ConnectionService);
+  protected themeService = inject(ThemeService);
   private router = inject(Router);
 
   protected readonly icons = APP_ICONS;

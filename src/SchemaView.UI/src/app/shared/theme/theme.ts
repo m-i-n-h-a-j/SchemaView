@@ -1,13 +1,13 @@
 import { definePreset } from '@primeuix/themes';
 import Lara from '@primeuix/themes/aura';
 
-export type KinexaThemeShade = 50 | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 | 950;
-export type KinexaThemePalette = Record<KinexaThemeShade, string>;
+export type SchemaViewThemeShade = 50 | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 | 950;
+export type SchemaViewThemePalette = Record<SchemaViewThemeShade, string>;
 
-export const KINEXA_PRIMARY_COLORS = ['blue', 'fuchsia', 'green', 'red'] as const;
-export type KinexaPrimaryColor = (typeof KINEXA_PRIMARY_COLORS)[number];
+export const SCHEMAVIEW_PRIMARY_COLORS = ['blue', 'fuchsia', 'green', 'red'] as const;
+export type SchemaViewPrimaryColor = (typeof SCHEMAVIEW_PRIMARY_COLORS)[number];
 
-export const KINEXA_PRIMARY_PALETTES = {
+export const SCHEMAVIEW_PRIMARY_PALETTES = {
   blue: {
     50: '#eef5ff',
     100: '#d9e9ff',
@@ -60,9 +60,9 @@ export const KINEXA_PRIMARY_PALETTES = {
     900: '#6e2020',
     950: '#3b0d0d',
   },
-} satisfies Record<KinexaPrimaryColor, KinexaThemePalette>;
+} satisfies Record<SchemaViewPrimaryColor, SchemaViewThemePalette>;
 
-export const KINEXA_PRIMARY_COLOR_SCHEME = {
+export const SCHEMAVIEW_PRIMARY_COLOR_SCHEME = {
   light: {
     primary: {
       color: '{primary.500}',
@@ -93,7 +93,7 @@ export const KINEXA_PRIMARY_COLOR_SCHEME = {
   },
 } as const;
 
-export const KinexaDefaultPreset = definePreset(Lara, {
+export const SchemaViewDefaultPreset = definePreset(Lara, {
   semantic: {
     borderRadius: {
       none: '0',
@@ -104,7 +104,7 @@ export const KinexaDefaultPreset = definePreset(Lara, {
       xl: '20px',
     },
 
-    primary: KINEXA_PRIMARY_PALETTES.blue,
-    colorScheme: KINEXA_PRIMARY_COLOR_SCHEME,
+    primary: SCHEMAVIEW_PRIMARY_PALETTES.blue,
+    colorScheme: SCHEMAVIEW_PRIMARY_COLOR_SCHEME,
   },
 });

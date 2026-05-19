@@ -2,17 +2,23 @@ import { Component, inject } from '@angular/core';
 import { FormGroup, FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ConnectionService } from '../../../../services/connection/connection-service';
+import { ThemeService } from '../../../../services/theme/theme-service';
 import { ButtonComponent } from '../../../../shared/components/button-component/button-component';
+import { IconComponent } from '../../../../shared/components/icon-component/icon-component';
+import { APP_ICONS } from '../../../../shared/models/constants/icons';
 
 @Component({
   selector: 'app-add-db-component',
-  imports: [ReactiveFormsModule, ButtonComponent],
+  imports: [ReactiveFormsModule, ButtonComponent, IconComponent],
   templateUrl: './add-db-component.html',
   styleUrl: './add-db-component.css',
 })
 export class AddDbComponent {
   private connectionService = inject(ConnectionService);
+  protected themeService = inject(ThemeService);
   private router = inject(Router);
+
+  protected readonly icons = APP_ICONS;
 
   protected connection = new FormGroup({
     name: new FormControl('', Validators.required),

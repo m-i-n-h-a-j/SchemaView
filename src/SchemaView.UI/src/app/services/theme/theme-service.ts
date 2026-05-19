@@ -3,11 +3,11 @@ import { updatePreset, updateSurfacePalette } from '@primeuix/themes';
 import Lara from '@primeuix/themes/aura';
 import { PrimeColor, SurfaceColor } from '../../shared/models/types/primeng';
 import {
-  KINEXA_PRIMARY_COLOR_SCHEME,
-  KINEXA_PRIMARY_COLORS,
-  KINEXA_PRIMARY_PALETTES,
-  KinexaPrimaryColor,
-  KinexaThemeShade,
+  SCHEMAVIEW_PRIMARY_COLOR_SCHEME,
+  SCHEMAVIEW_PRIMARY_COLORS,
+  SCHEMAVIEW_PRIMARY_PALETTES,
+  SchemaViewPrimaryColor,
+  SchemaViewThemeShade,
 } from '../../shared/theme/theme';
 import { ThemeState } from '../../shared/models/interfaces/theme-state';
 
@@ -52,7 +52,7 @@ export class ThemeService {
     }
   }
 
-  colors = [...KINEXA_PRIMARY_COLORS];
+  colors = [...SCHEMAVIEW_PRIMARY_COLORS];
 
   themePresets = {
     green: {
@@ -276,8 +276,8 @@ export class ThemeService {
     this.updatePrimary(themeState.primary ?? 'blue');
   }
 
-  getPrimaryColor(color: string, shade: KinexaThemeShade = 500): string {
-    return KINEXA_PRIMARY_PALETTES[color as KinexaPrimaryColor]?.[shade] ?? '';
+  getPrimaryColor(color: string, shade: SchemaViewThemeShade = 500): string {
+    return SCHEMAVIEW_PRIMARY_PALETTES[color as SchemaViewPrimaryColor]?.[shade] ?? '';
   }
 
   setDark() {
@@ -359,7 +359,7 @@ export class ThemeService {
     }
 
     const primaryPalette =
-      KINEXA_PRIMARY_PALETTES[primary as KinexaPrimaryColor] ?? primitive[primary];
+      SCHEMAVIEW_PRIMARY_PALETTES[primary as SchemaViewPrimaryColor] ?? primitive[primary];
 
     updatePreset({
       semantic: {
@@ -369,7 +369,7 @@ export class ThemeService {
 
         colorScheme: {
           light: {
-            ...KINEXA_PRIMARY_COLOR_SCHEME.light,
+            ...SCHEMAVIEW_PRIMARY_COLOR_SCHEME.light,
 
             ...(secondary
               ? {
@@ -395,7 +395,7 @@ export class ThemeService {
           },
 
           dark: {
-            ...KINEXA_PRIMARY_COLOR_SCHEME.dark,
+            ...SCHEMAVIEW_PRIMARY_COLOR_SCHEME.dark,
 
             ...(secondary
               ? {

@@ -12,7 +12,7 @@ import { MessageService, ConfirmationService } from 'primeng/api';
 import { provideNgProgressOptions } from 'ngx-progressbar';
 
 import { ThemeService } from './services/theme/theme-service';
-import { KinexaDefaultPreset } from './shared/theme/theme';
+import { SchemaViewDefaultPreset } from './shared/theme/theme';
 
 function initializeApp() {
   const themeService = inject(ThemeService);
@@ -34,7 +34,7 @@ export const appConfig: ApplicationConfig = {
     providePrimeNG({
       ripple: false,
       theme: {
-        preset: KinexaDefaultPreset,
+        preset: SchemaViewDefaultPreset,
         options: {
           darkModeSelector: '.dark-selector',
           cssLayer: {
