@@ -3,36 +3,10 @@ import { ApiService } from '../api/api-service';
 import { ServiceUrl } from '../../shared/models/enums/serviceUrl';
 import { DatabaseConnection } from '../../shared/models/interfaces/db-connection';
 import { Observable } from 'rxjs';
-
-export interface SchemaDto {
-  name: string;
-}
-
-export interface TableDto {
-  schema: string;
-  name: string;
-}
-
-export interface ColumnDataDto {
-  name: string;
-  dataType: string;
-  isNullable: boolean;
-}
-
-export interface TableDataDto {
-  schema: string;
-  table: string;
-  columns: ColumnDataDto[];
-  rows: Record<string, any>[];
-  totalRows: number;
-}
-
-export interface TableDataQuery {
-  offset?: number;
-  limit?: number;
-  sortColumn?: string | null;
-  sortDirection?: 'asc' | 'desc' | null;
-}
+import { SchemaDto } from '../../shared/models/interfaces/schema-dto';
+import { TableDataDto } from '../../shared/models/interfaces/table-data-dto';
+import { TableDataQuery } from '../../shared/models/interfaces/table-data-query';
+import { TableDto } from '../../shared/models/interfaces/table-dto';
 
 @Injectable({
   providedIn: 'root',

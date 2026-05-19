@@ -28,8 +28,6 @@ export class ConnectionService {
     const connections = [...existingConnections, newConnection];
     localStorage.setItem(storageKey, JSON.stringify(connections));
     this.dbConnections.set(connections);
-
-    console.log('Saved:', connections);
   }
 
   getAllConnections(): DatabaseConnection[] {
@@ -45,8 +43,6 @@ export class ConnectionService {
 
     localStorage.setItem(storageKey, JSON.stringify(updatedConnections));
     this.dbConnections.set(updatedConnections);
-
-    console.log('Deleted:', id);
   }
 
   testConnection(connection: Omit<DatabaseConnection, 'id' | 'createdAt'>) {

@@ -1,8 +1,9 @@
 import { Component, inject, input, output, signal, effect, untracked } from '@angular/core';
-import { DatabaseService, TableDataDto } from '../../../../services/database/database-service';
+import { DatabaseService } from '../../../../services/database/database-service';
 import { DatabaseConnection } from '../../../../shared/models/interfaces/db-connection';
 import { IconComponent } from '../../../../shared/components/icon-component/icon-component';
 import { APP_ICONS } from '../../../../shared/models/constants/icons';
+import { TableDataDto } from '../../../../shared/models/interfaces/table-data-dto';
 
 type SortDirection = 'asc' | 'desc';
 
@@ -57,12 +58,7 @@ export class TableDataViewerComponent {
     });
   }
 
-  protected loadTableData(
-    conn: DatabaseConnection,
-    schema: string,
-    table: string,
-    reset: boolean,
-  ) {
+  protected loadTableData(conn: DatabaseConnection, schema: string, table: string, reset: boolean) {
     const currentData = this.tableData();
     const offset = reset ? 0 : (currentData?.rows.length ?? 0);
     const version = reset ? ++this.requestVersion : this.requestVersion;
@@ -112,7 +108,9 @@ export class TableDataViewerComponent {
             return;
           }
 
-          this.tableDataError.set(err.error?.message || `Failed to load data for table "${table}".`);
+          this.tableDataError.set(
+            err.error?.message || `Failed to load data for table "${table}".`,
+          );
           this.isLoadingTableData.set(false);
           this.isLoadingMoreRows.set(false);
         },
@@ -170,5 +168,23 @@ export class TableDataViewerComponent {
 
   protected loadedRowCount() {
     return this.tableData()?.rows.length ?? 0;
+  }
+
+  protected getColumnSortIcon(columnName: string) {
+    if (this.sortColumn() === columnName) {
+      return this.sortDirection() === 'asc'
+        ? this.icons.sort_descending
+        : this.icons.sort_ascending;
+    } else {
+      return this.icons.reorder;
+    }
+  }
+
+  protected getColumnSortTitle(columnName: string) {
+    if (this.sortColumn() === columnName) {
+      return this.sortDirection() === 'asc' ? ' Ascending' : ' Descending';
+    } else {
+      return 'Sort by ' + columnName;
+    }
   }
 }

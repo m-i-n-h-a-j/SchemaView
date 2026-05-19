@@ -1,6 +1,4 @@
-﻿
-
-namespace SchemaView.Application.DTOs
+﻿namespace SchemaView.Application.DTOs
 {
     public sealed class SchemaDto
     {

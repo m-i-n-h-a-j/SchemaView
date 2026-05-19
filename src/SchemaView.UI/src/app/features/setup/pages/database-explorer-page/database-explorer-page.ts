@@ -1,16 +1,14 @@
 import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ConnectionService } from '../../../../services/connection/connection-service';
-import {
-  DatabaseService,
-  SchemaDto,
-  TableDto,
-} from '../../../../services/database/database-service';
+import { DatabaseService } from '../../../../services/database/database-service';
 import { ThemeService } from '../../../../services/theme/theme-service';
 import { IconComponent } from '../../../../shared/components/icon-component/icon-component';
 import { APP_ICONS } from '../../../../shared/models/constants/icons';
 import { FormsModule } from '@angular/forms';
 import { TableDataViewerComponent } from '../../components/table-data-viewer/table-data-viewer';
+import { SchemaDto } from '../../../../shared/models/interfaces/schema-dto';
+import { TableDto } from '../../../../shared/models/interfaces/table-dto';
 
 @Component({
   selector: 'app-database-explorer-page',

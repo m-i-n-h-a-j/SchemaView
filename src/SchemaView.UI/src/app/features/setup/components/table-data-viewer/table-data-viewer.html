@@ -125,7 +125,7 @@
                       type="button"
                       (click)="sortByColumn(col.name)"
                       class="group flex w-full items-start justify-between gap-3 text-left cursor-pointer focus:outline-none"
-                      [title]="'Sort by ' + col.name"
+                      [title]="getColumnSortTitle(col.name)"
                     >
                       <span class="flex min-w-0 flex-col">
                         <span class="truncate" [title]="col.name">{{ col.name }}</span>
@@ -140,11 +140,7 @@
                         [class.opacity-100]="sortColumn() === col.name"
                       >
                         <app-icon-component
-                          [path]="
-                            sortColumn() === col.name && sortDirection() === 'desc'
-                              ? icons.arrow_downward
-                              : icons.arrow_upward
-                          "
+                          [path]="getColumnSortIcon(col.name)"
                           [size]="3"
                         ></app-icon-component>
                       </span>
