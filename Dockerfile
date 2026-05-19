@@ -30,6 +30,12 @@ COPY --from=ui-build /ui/dist/SchemaView.UI/browser/ /app/publish/wwwroot/
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 WORKDIR /app
 
+ARG REPOSITORY_URL
+ARG IMAGE_DESCRIPTION="SchemaView API and Angular UI"
+
+LABEL org.opencontainers.image.source=$REPOSITORY_URL
+LABEL org.opencontainers.image.description=$IMAGE_DESCRIPTION
+
 COPY --from=publish /app/publish .
 
 ENV ASPNETCORE_URLS=http://+:8080
