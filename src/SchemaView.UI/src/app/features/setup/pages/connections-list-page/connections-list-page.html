@@ -13,7 +13,7 @@
           <app-icon-component
             [path]="icons.database"
             [size]="6"
-            class="text-primary-500 dark:text-primary-400"
+            class="text-primary"
           ></app-icon-component>
           Saved Connections
         </h1>
@@ -24,7 +24,7 @@
       <div class="flex items-center gap-3">
         <button
           (click)="themeService.toggleTheme()"
-          class="flex items-center justify-center w-10 h-10 rounded-lg border border-surface-200 dark:border-surface-800 bg-surface-0 dark:bg-surface-900 text-muted-color hover:text-muted-color-emphasis hover:bg-surface-100 dark:hover:bg-surface-800 transition duration-150 focus:outline-none focus:ring-1 focus:ring-primary-500"
+          class="flex items-center justify-center w-10 h-10 rounded-lg border border-surface-200 dark:border-surface-800 bg-surface-0 dark:bg-surface-900 text-muted-color hover:text-muted-color-emphasis hover:bg-surface-100 dark:hover:bg-surface-800 transition duration-150 focus:outline-none focus:ring-1 focus:ring-primary"
           [title]="themeService.isDark() ? 'Switch to Light Mode' : 'Switch to Dark Mode'"
         >
           <app-icon-component
@@ -80,7 +80,7 @@
             <div class="flex items-start justify-between">
               <div class="flex items-center gap-3">
                 <div
-                  class="w-10 h-10 bg-surface-100 dark:bg-surface-950 border border-surface-200 dark:border-surface-800 rounded-lg flex items-center justify-center text-primary-500 dark:text-primary-400"
+                  class="w-10 h-10 bg-surface-100 dark:bg-surface-950 border border-surface-200 dark:border-surface-800 rounded-lg flex items-center justify-center text-primary"
                 >
                   <app-icon-component [path]="icons.database" [size]="5"></app-icon-component>
                 </div>
@@ -134,8 +134,7 @@
                 >
                 <span
                   class="inline-flex items-center gap-1 mt-0.5 font-medium"
-                  [class.text-primary-500]="conn.ssl"
-                  [class.text-primary-400]="conn.ssl && themeService.isDark()"
+                  [class.text-primary]="conn.ssl"
                   [class.text-muted-color]="!conn.ssl"
                 >
                   <app-icon-component
@@ -153,7 +152,7 @@
             >
               <span>Added: {{ conn.createdAt | date: 'short' }}</span>
               <button
-                class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary-500 hover:bg-primary-600 active:bg-primary-700 text-primary-contrast font-semibold text-xs rounded-md transition duration-150 focus:outline-none focus:ring-1 focus:ring-primary-500"
+                class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary hover:bg-primary-hover active:bg-primary-active text-primary-contrast font-semibold text-xs rounded-md transition duration-150 focus:outline-none focus:ring-1 focus:ring-primary"
               >
                 Connect
                 <app-icon-component [path]="icons.arrow_forward" [size]="3.5"></app-icon-component>

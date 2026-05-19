@@ -21,7 +21,7 @@ export class ConnectionsListPage {
   protected readonly icons = APP_ICONS;
 
   protected goToAddConnection() {
-    this.router.navigate(['/']);
+    this.router.navigate(['/'], { queryParams: { add: 'true' } });
   }
 
   protected deleteConnection(id: string) {

@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { ConnectionService } from '../../../../services/connection/connection-service';
 import { AddDbComponent } from '../../components/add-db-component/add-db-component';
 
@@ -10,11 +10,17 @@ import { AddDbComponent } from '../../components/add-db-component/add-db-compone
   styleUrl: './initial-setup-page.css',
 })
 export class InitialSetupPage implements OnInit {
-  private connectionService = inject(ConnectionService);
+  protected connectionService = inject(ConnectionService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
+
+  protected get isFirstConnection(): boolean {
+    return this.connectionService.connections().length === 0;
+  }
 
   ngOnInit() {
-    if (this.connectionService.connections().length > 0) {
+    const isAdding = this.route.snapshot.queryParamMap.has('add');
+    if (this.connectionService.connections().length > 0 && !isAdding) {
       this.router.navigate(['/connections']);
     }
   }

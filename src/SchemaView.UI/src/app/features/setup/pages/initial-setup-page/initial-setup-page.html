@@ -1,1 +1,72 @@
-<app-add-db-component></app-add-db-component>
+<div class="flex flex-col lg:flex-row min-h-screen bg-surface-50 dark:bg-surface-950 text-color font-sans transition-colors duration-200">
+  @if (isFirstConnection) {
+    <!-- Left onboarding panel -->
+    <div class="w-full lg:w-1/2 border-b lg:border-b-0 lg:border-r border-surface-200 dark:border-surface-800 p-8 sm:p-12 lg:p-16 flex flex-col justify-center bg-surface-0 dark:bg-surface-900/30">
+      <div class="max-w-md mx-auto lg:mx-0 space-y-8">
+        <div>
+          <h1 class="text-4xl font-extrabold tracking-tight text-muted-color-emphasis mb-4">
+            Welcome to SchemaView
+          </h1>
+          <p class="text-muted-color text-base leading-relaxed">
+            Connect to your database and explore schemas, tables, indexes, and query data instantly.
+          </p>
+        </div>
+
+        <div class="space-y-4">
+          <div class="flex items-start gap-4">
+            <div class="flex-shrink-0 w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
+              <svg class="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+              </svg>
+            </div>
+            <div>
+              <h4 class="font-semibold text-muted-color-emphasis text-sm">PostgreSQL Support</h4>
+              <p class="text-xs text-muted-color mt-0.5">Secure integration with local or cloud PostgreSQL database instances.</p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-4">
+            <div class="flex-shrink-0 w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
+              <svg class="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+              </svg>
+            </div>
+            <div>
+              <h4 class="font-semibold text-muted-color-emphasis text-sm">Fast Schema Browsing</h4>
+              <p class="text-xs text-muted-color mt-0.5">Analyze and visualize schema layouts, keys, and indexes dynamically.</p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-4">
+            <div class="flex-shrink-0 w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
+              <svg class="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+              </svg>
+            </div>
+            <div>
+              <h4 class="font-semibold text-muted-color-emphasis text-sm">Runtime DB Connections</h4>
+              <p class="text-xs text-muted-color mt-0.5">Connect dynamically at runtime without restarting the application.</p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-4">
+            <div class="flex-shrink-0 w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
+              <svg class="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+              </svg>
+            </div>
+            <div>
+              <h4 class="font-semibold text-muted-color-emphasis text-sm">Local Secure Storage</h4>
+              <p class="text-xs text-muted-color mt-0.5">All credentials are kept secure and saved on your local device only.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Form panel -->
+  <div class="flex-1 flex flex-col justify-center">
+    <app-add-db-component></app-add-db-component>
+  </div>
+</div>
