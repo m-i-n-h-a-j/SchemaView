@@ -97,7 +97,7 @@
               class="text-sm font-bold text-muted-color-emphasis uppercase tracking-wider flex items-center gap-2"
             >
               <app-icon-component
-                [path]="icons.database"
+                [path]="icons.schema"
                 [size]="4"
                 class="text-primary"
               ></app-icon-component>
@@ -127,9 +127,7 @@
         </div>
 
         <!-- Schema List -->
-        <div
-          class="divide-y divide-surface-100 dark:divide-surface-800/60 flex-1 overflow-y-auto thin-scrollbar"
-        >
+        <div class="flex-1 overflow-y-auto thin-scrollbar">
           @if (isLoadingSchemas()) {
             <div class="flex flex-col items-center justify-center p-8 space-y-2">
               <app-icon-component
@@ -145,14 +143,12 @@
             @for (schema of filteredSchemas(); track schema.name) {
               <button
                 (click)="selectSchema(schema.name)"
-                class="w-full text-left px-4 py-3 text-xs font-medium transition-all duration-150 flex items-center justify-between group cursor-pointer"
-                [class.bg-primary\/5]="selectedSchema() === schema.name"
-                [class.text-primary]="selectedSchema() === schema.name"
-                [class.border-l-2]="selectedSchema() === schema.name"
-                [class.border-primary]="selectedSchema() === schema.name"
-                [class.text-muted-color-emphasis]="selectedSchema() !== schema.name"
-                [class.hover:bg-surface-50]="selectedSchema() !== schema.name"
-                [class.dark:hover:bg-surface-800\/40]="selectedSchema() !== schema.name"
+                class="w-full text-left px-4 py-3 text-xs font-medium transition-all duration-150 flex items-center justify-between group cursor-pointer border-b last:border-b-0"
+                [class]="
+                  selectedSchema() === schema.name
+                    ? 'bg-primary/5 text-primary border-l-2 border-primary border-b-transparent'
+                    : 'text-muted-color-emphasis hover:bg-surface-50 dark:hover:bg-surface-800/40 border-surface-100 dark:border-surface-800/60'
+                "
               >
                 <div class="flex items-center gap-2">
                   <app-icon-component
