@@ -96,5 +96,116 @@ namespace SchemaView.Infrastructure.Services
                 );
             }
         }
+
+        public async Task<Result<TableDataDto>> GetTableDataAsync(
+            DatabaseConnectionDto connection,
+            string schema,
+            string table,
+            CancellationToken cancellationToken = default
+        )
+        {
+            try
+            {
+                var connectionString = connectionService.BuildConnectionString(connection);
+
+                await using var conn = new NpgsqlConnection(connectionString);
+
+                await conn.OpenAsync(cancellationToken);
+
+                // Get columns
+                const string columnsSql = """
+                    SELECT
+                        column_name,
+                        data_type,
+                        is_nullable
+                    FROM information_schema.columns
+                    WHERE table_schema = @schema
+                      AND table_name = @table
+                    ORDER BY ordinal_position;
+                    """;
+
+                var columns = new List<ColumnDataDto>();
+
+                await using (var columnsCommand = new NpgsqlCommand(columnsSql, conn))
+                {
+                    columnsCommand.Parameters.AddWithValue("schema", schema);
+                    columnsCommand.Parameters.AddWithValue("table", table);
+
+                    await using var reader = await columnsCommand.ExecuteReaderAsync(
+                        cancellationToken
+                    );
+
+                    while (await reader.ReadAsync(cancellationToken))
+                    {
+                        columns.Add(
+                            new ColumnDataDto
+                            {
+                                Name = reader.GetString(0),
+                                DataType = reader.GetString(1),
+                                IsNullable = reader.GetString(2) == "YES",
+                            }
+                        );
+                    }
+                }
+
+                // Get total rows
+                var countSql = $"""
+                    SELECT COUNT(*)
+                    FROM "{schema}"."{table}";
+                    """;
+
+                int totalRows;
+
+                await using (var countCommand = new NpgsqlCommand(countSql, conn))
+                {
+                    totalRows = Convert.ToInt32(
+                        await countCommand.ExecuteScalarAsync(cancellationToken)
+                    );
+                }
+
+                var dataSql = $"""
+                    SELECT *
+                    FROM "{schema}"."{table}";
+                    """;
+
+                var rows = new List<IReadOnlyDictionary<string, object?>>();
+
+                await using (var dataCommand = new NpgsqlCommand(dataSql, conn))
+                await using (var reader = await dataCommand.ExecuteReaderAsync(cancellationToken))
+                {
+                    while (await reader.ReadAsync(cancellationToken))
+                    {
+                        var row = new Dictionary<string, object?>();
+
+                        for (var i = 0; i < reader.FieldCount; i++)
+                        {
+                            row[reader.GetName(i)] = await reader.IsDBNullAsync(
+                                i,
+                                cancellationToken
+                            )
+                                ? null
+                                : reader.GetValue(i);
+                        }
+
+                        rows.Add(row);
+                    }
+                }
+
+                return Result<TableDataDto>.Success(
+                    new TableDataDto
+                    {
+                        Schema = schema,
+                        Table = table,
+                        Columns = columns,
+                        Rows = rows,
+                        TotalRows = totalRows,
+                    }
+                );
+            }
+            catch (Exception ex)
+            {
+                return Result<TableDataDto>.Fail(new Error("General.Validation", ex.Message));
+            }
+        }
     }
 }

@@ -15,6 +15,12 @@ namespace SchemaView.Application.Interfaces
             string schema,
             CancellationToken cancellationToken = default
         );
+
+        Task<Result<TableDataDto>> GetTableDataAsync(
+            DatabaseConnectionDto connection,
+            string schema,
+            string table,
+            CancellationToken cancellationToken = default
+        );
     }
 }
-
