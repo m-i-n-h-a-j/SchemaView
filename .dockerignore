@@ -1,0 +1,14 @@
+.git
+.github
+.vs
+**/.angular
+**/.claude
+**/.cursor
+**/.gemini
+**/.vscode
+**/bin
+**/obj
+**/dist
+**/node_modules
+Dockerfile
+README.md
