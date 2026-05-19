@@ -2,6 +2,7 @@ import { inject, Injectable, OnInit, signal } from '@angular/core';
 import { DatabaseConnection } from '../../shared/models/interfaces/db-connection';
 import { ApiService } from '../api/api-service';
 import { ServiceUrl } from '../../shared/models/enums/serviceUrl';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable({
   providedIn: 'root',
@@ -21,9 +22,10 @@ export class ConnectionService {
 
     const newConnection: DatabaseConnection = {
       ...connection,
-      id: crypto.randomUUID(),
+      id: uuidv4(),
       createdAt: new Date().toISOString(),
     };
+
 
     const connections = [...existingConnections, newConnection];
     localStorage.setItem(storageKey, JSON.stringify(connections));
