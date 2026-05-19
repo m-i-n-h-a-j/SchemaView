@@ -13,6 +13,20 @@ export interface TableDto {
   name: string;
 }
 
+export interface ColumnDataDto {
+  name: string;
+  dataType: string;
+  isNullable: boolean;
+}
+
+export interface TableDataDto {
+  schema: string;
+  table: string;
+  columns: ColumnDataDto[];
+  rows: Record<string, any>[];
+  totalRows: number;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -28,13 +42,9 @@ export class DatabaseService {
       database: connection.database,
       username: connection.username,
       password: connection.password,
-      ssl: connection.ssl
+      ssl: connection.ssl,
     };
-    return this.apiService.post<SchemaDto[]>(
-      ServiceUrl.ApiServer,
-      'database/schemas',
-      dbConnDto
-    );
+    return this.apiService.post<SchemaDto[]>(ServiceUrl.ApiServer, 'database/schemas', dbConnDto);
   }
 
   getTables(connection: DatabaseConnection, schema: string): Observable<TableDto[]> {
@@ -45,12 +55,33 @@ export class DatabaseService {
       database: connection.database,
       username: connection.username,
       password: connection.password,
-      ssl: connection.ssl
+      ssl: connection.ssl,
     };
     return this.apiService.post<TableDto[]>(
       ServiceUrl.ApiServer,
       `database/tables/${schema}`,
-      dbConnDto
+      dbConnDto,
+    );
+  }
+
+  getTableData(
+    connection: DatabaseConnection,
+    schema: string,
+    table: string,
+  ): Observable<TableDataDto> {
+    const dbConnDto = {
+      provider: connection.provider,
+      host: connection.host,
+      port: connection.port,
+      database: connection.database,
+      username: connection.username,
+      password: connection.password,
+      ssl: connection.ssl,
+    };
+    return this.apiService.post<TableDataDto>(
+      ServiceUrl.ApiServer,
+      `database/tables/${schema}/${table}`,
+      dbConnDto,
     );
   }
 }

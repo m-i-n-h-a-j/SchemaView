@@ -8,13 +8,13 @@ import {
 } from '../../../../services/database/database-service';
 import { ThemeService } from '../../../../services/theme/theme-service';
 import { IconComponent } from '../../../../shared/components/icon-component/icon-component';
-import { ButtonComponent } from '../../../../shared/components/button-component/button-component';
 import { APP_ICONS } from '../../../../shared/models/constants/icons';
 import { FormsModule } from '@angular/forms';
+import { TableDataViewerComponent } from '../../components/table-data-viewer/table-data-viewer';
 
 @Component({
   selector: 'app-database-explorer-page',
-  imports: [IconComponent, RouterLink, FormsModule],
+  imports: [IconComponent, RouterLink, FormsModule, TableDataViewerComponent],
   templateUrl: './database-explorer-page.html',
   styleUrl: './database-explorer-page.css',
 })
@@ -37,6 +37,7 @@ export class DatabaseExplorerPage implements OnInit {
   protected schemas = signal<SchemaDto[]>([]);
   protected tables = signal<TableDto[]>([]);
   protected selectedSchema = signal<string | null>(null);
+  protected selectedTable = signal<string | null>(null);
 
   protected schemaSearch = signal('');
   protected tableSearch = signal('');
@@ -70,6 +71,17 @@ export class DatabaseExplorerPage implements OnInit {
       ) {
         this.selectSchema(schema, false);
       }
+
+      const table = params['table'];
+      if (!table && this.selectedTable()) {
+        this.clearSelectedTable(false);
+      } else if (
+        table &&
+        table !== this.selectedTable() &&
+        this.tables().some((t) => t.name === table)
+      ) {
+        this.selectTable(table, false);
+      }
     });
   }
 
@@ -102,11 +114,12 @@ export class DatabaseExplorerPage implements OnInit {
 
   protected selectSchema(schema: string, updateUrl: boolean = true) {
     this.selectedSchema.set(schema);
+    this.selectedTable.set(null);
 
     if (updateUrl) {
       this.router.navigate([], {
         relativeTo: this.route,
-        queryParams: { schema: schema },
+        queryParams: { schema: schema, table: null },
         queryParamsHandling: 'merge',
       });
     }
@@ -120,11 +133,40 @@ export class DatabaseExplorerPage implements OnInit {
       next: (data) => {
         this.tables.set(data);
         this.isLoadingTables.set(false);
+
+        const tableParam = this.route.snapshot.queryParamMap.get('table');
+        if (tableParam && data.some((t) => t.name === tableParam)) {
+          this.selectTable(tableParam, false);
+        }
       },
       error: (err) => {
         this.error.set(err.error?.message || `Failed to load tables for schema "${schema}".`);
         this.isLoadingTables.set(false);
       },
     });
+  }
+
+  protected selectTable(tableName: string, updateUrl: boolean = true) {
+    this.selectedTable.set(tableName);
+
+    if (updateUrl) {
+      this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: { table: tableName },
+        queryParamsHandling: 'merge',
+      });
+    }
+  }
+
+  protected clearSelectedTable(updateUrl: boolean = true) {
+    this.selectedTable.set(null);
+
+    if (updateUrl) {
+      this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: { table: null },
+        queryParamsHandling: 'merge',
+      });
+    }
   }
 }

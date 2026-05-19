@@ -19,6 +19,22 @@ namespace SchemaView.API.Controllers
             return HandleResult(result);
         }
 
+        [HttpPost("tables/{schema}")]
+        public async Task<IActionResult> GetTables(
+            [FromBody] DatabaseConnectionDto connection,
+            [FromRoute] string schema,
+            CancellationToken cancellationToken
+        )
+        {
+            var result = await databaseProvider.GetTablesAsync(
+                connection,
+                schema,
+                cancellationToken
+            );
+
+            return HandleResult(result);
+        }
+
         [HttpPost("tables/{schema}/{table}")]
         public async Task<IActionResult> GetTableData(
             [FromBody] DatabaseConnectionDto connection,
