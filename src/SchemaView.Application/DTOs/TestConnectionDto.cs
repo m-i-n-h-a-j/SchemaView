@@ -1,10 +1,7 @@
-﻿using SchemaView.Domain.Connections.Enums;
-
-namespace SchemaView.Application.DTOs
+﻿namespace SchemaView.Application.DTOs
 {
     public sealed class TestConnectionRequestDto
     {
-        public required DatabaseProvider Provider { get; set; }
         public string Host { get; set; } = default!;
         public int Port { get; set; }
         public string Database { get; set; } = default!;

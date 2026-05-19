@@ -1,17 +1,17 @@
-﻿using Npgsql;
-using SchemaView.Domain.DatabaseMetadata.Models;
-using SchemaView.Domain.DatabaseMetadata.Services;
+using Npgsql;
+using SchemaView.Application.DTOs;
+using SchemaView.Application.Interfaces;
 
-namespace SchemaView.Infrastructure.DatabaseMetadata.PostgreSql
+namespace SchemaView.Infrastructure.Services
 {
-    public sealed class PostgreSqlMetadataService : IDatabaseMetadataService
+    public sealed class PostgreSqlProvider : IDatabaseProvider
     {
-        public async Task<IReadOnlyCollection<DatabaseSchema>> GetSchemasAsync(
+        public async Task<IReadOnlyCollection<SchemaDto>> GetSchemasAsync(
             string connectionString,
             CancellationToken cancellationToken = default
         )
         {
-            var schemas = new List<DatabaseSchema>();
+            var schemas = new List<SchemaDto>();
 
             await using var connection = new NpgsqlConnection(connectionString);
 
@@ -31,19 +31,19 @@ namespace SchemaView.Infrastructure.DatabaseMetadata.PostgreSql
 
             while (await reader.ReadAsync(cancellationToken))
             {
-                schemas.Add(new DatabaseSchema { Name = reader.GetString(0) });
+                schemas.Add(new SchemaDto { Name = reader.GetString(0) });
             }
 
             return schemas;
         }
 
-        public async Task<IReadOnlyCollection<DatabaseTable>> GetTablesAsync(
+        public async Task<IReadOnlyCollection<TableDto>> GetTablesAsync(
             string connectionString,
             string schema,
             CancellationToken cancellationToken = default
         )
         {
-            var tables = new List<DatabaseTable>();
+            var tables = new List<TableDto>();
 
             await using var connection = new NpgsqlConnection(connectionString);
 
@@ -66,7 +66,7 @@ namespace SchemaView.Infrastructure.DatabaseMetadata.PostgreSql
             while (await reader.ReadAsync(cancellationToken))
             {
                 tables.Add(
-                    new DatabaseTable { Schema = reader.GetString(0), Name = reader.GetString(1) }
+                    new TableDto { Schema = reader.GetString(0), Name = reader.GetString(1) }
                 );
             }
 

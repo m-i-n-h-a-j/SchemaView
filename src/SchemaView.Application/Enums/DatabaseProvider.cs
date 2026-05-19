@@ -1,4 +1,4 @@
-﻿namespace SchemaView.Domain.Connections.Enums
+﻿namespace SchemaView.Application.Enums
 {
     public enum DatabaseProvider
     {
