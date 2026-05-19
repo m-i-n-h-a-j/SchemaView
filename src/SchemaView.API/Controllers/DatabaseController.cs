@@ -40,6 +40,7 @@ namespace SchemaView.API.Controllers
             [FromBody] DatabaseConnectionDto connection,
             [FromRoute] string schema,
             [FromRoute] string table,
+            [FromQuery] TableDataQueryDto query,
             CancellationToken cancellationToken
         )
         {
@@ -47,6 +48,7 @@ namespace SchemaView.API.Controllers
                 connection,
                 schema,
                 table,
+                query,
                 cancellationToken
             );
 

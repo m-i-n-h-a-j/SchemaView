@@ -20,6 +20,7 @@ namespace SchemaView.Application.Interfaces
             DatabaseConnectionDto connection,
             string schema,
             string table,
+            TableDataQueryDto query,
             CancellationToken cancellationToken = default
         );
     }

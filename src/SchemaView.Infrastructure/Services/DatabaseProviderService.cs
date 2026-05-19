@@ -69,6 +69,7 @@ namespace SchemaView.Infrastructure.Services
             DatabaseConnectionDto connection,
             string schema,
             string table,
+            TableDataQueryDto query,
             CancellationToken cancellationToken = default
         )
         {
@@ -78,6 +79,7 @@ namespace SchemaView.Infrastructure.Services
                     connection,
                     schema,
                     table,
+                    query,
                     cancellationToken
                 ),
 
@@ -85,6 +87,7 @@ namespace SchemaView.Infrastructure.Services
                     connection,
                     schema,
                     table,
+                    query,
                     cancellationToken
                 ),
 

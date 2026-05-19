@@ -98,6 +98,7 @@ namespace SchemaView.Infrastructure.Services
             DatabaseConnectionDto connection,
             string schema,
             string table,
+            TableDataQueryDto query,
             CancellationToken cancellationToken = default
         )
         {
@@ -146,10 +147,18 @@ namespace SchemaView.Infrastructure.Services
                     }
                 }
 
+                var offset = Math.Max(0, query.Offset);
+                var limit = Math.Clamp(query.Limit, 1, 500);
+                var sortColumn = ResolveSortColumn(columns, query.SortColumn);
+                var sortDirection = ResolveSortDirection(query.SortDirection);
+                var orderBySql = sortColumn is null
+                    ? string.Empty
+                    : $"ORDER BY \"{EscapeIdentifier(sortColumn)}\" {sortDirection}";
+
                 // Get total rows
                 var countSql = $"""
                     SELECT COUNT(*)
-                    FROM "{schema}"."{table}"
+                    FROM "{EscapeIdentifier(schema)}"."{EscapeIdentifier(table)}"
                     """;
 
                 int totalRows;
@@ -164,29 +173,38 @@ namespace SchemaView.Infrastructure.Services
                 // Get table data
                 var dataSql = $"""
                     SELECT *
-                    FROM "{schema}"."{table}"
+                    FROM "{EscapeIdentifier(schema)}"."{EscapeIdentifier(table)}"
+                    {orderBySql}
+                    OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY
                     """;
 
                 var rows = new List<IReadOnlyDictionary<string, object?>>();
 
                 await using (var dataCommand = new OracleCommand(dataSql, conn))
-                await using (var reader = await dataCommand.ExecuteReaderAsync(cancellationToken))
                 {
-                    while (await reader.ReadAsync(cancellationToken))
+                    dataCommand.Parameters.Add(new OracleParameter("offset", offset));
+                    dataCommand.Parameters.Add(new OracleParameter("limit", limit));
+
+                    await using (
+                        var reader = await dataCommand.ExecuteReaderAsync(cancellationToken)
+                    )
                     {
-                        var row = new Dictionary<string, object?>();
-
-                        for (var i = 0; i < reader.FieldCount; i++)
+                        while (await reader.ReadAsync(cancellationToken))
                         {
-                            row[reader.GetName(i)] = await reader.IsDBNullAsync(
-                                i,
-                                cancellationToken
-                            )
-                                ? null
-                                : reader.GetValue(i);
-                        }
+                            var row = new Dictionary<string, object?>();
 
-                        rows.Add(row);
+                            for (var i = 0; i < reader.FieldCount; i++)
+                            {
+                                row[reader.GetName(i)] = await reader.IsDBNullAsync(
+                                    i,
+                                    cancellationToken
+                                )
+                                    ? null
+                                    : reader.GetValue(i);
+                            }
+
+                            rows.Add(row);
+                        }
                     }
                 }
 
@@ -205,6 +223,35 @@ namespace SchemaView.Infrastructure.Services
             {
                 return Result<TableDataDto>.Fail(new Error("General.Validation", ex.Message));
             }
+        }
+
+        private static string? ResolveSortColumn(
+            IReadOnlyCollection<ColumnDataDto> columns,
+            string? sortColumn
+        )
+        {
+            if (string.IsNullOrWhiteSpace(sortColumn))
+            {
+                return null;
+            }
+
+            return columns
+                .FirstOrDefault(column =>
+                    string.Equals(column.Name, sortColumn, StringComparison.OrdinalIgnoreCase)
+                )
+                ?.Name;
+        }
+
+        private static string ResolveSortDirection(string? sortDirection)
+        {
+            return string.Equals(sortDirection, "desc", StringComparison.OrdinalIgnoreCase)
+                ? "DESC"
+                : "ASC";
+        }
+
+        private static string EscapeIdentifier(string identifier)
+        {
+            return identifier.Replace("\"", "\"\"");
         }
     }
 }

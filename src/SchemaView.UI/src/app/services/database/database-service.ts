@@ -27,6 +27,13 @@ export interface TableDataDto {
   totalRows: number;
 }
 
+export interface TableDataQuery {
+  offset?: number;
+  limit?: number;
+  sortColumn?: string | null;
+  sortDirection?: 'asc' | 'desc' | null;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -68,6 +75,7 @@ export class DatabaseService {
     connection: DatabaseConnection,
     schema: string,
     table: string,
+    query: TableDataQuery = {},
   ): Observable<TableDataDto> {
     const dbConnDto = {
       provider: connection.provider,
@@ -78,10 +86,22 @@ export class DatabaseService {
       password: connection.password,
       ssl: connection.ssl,
     };
+
+    const params: Record<string, string | number> = {
+      offset: query.offset ?? 0,
+      limit: query.limit ?? 50,
+    };
+
+    if (query.sortColumn) {
+      params['sortColumn'] = query.sortColumn;
+      params['sortDirection'] = query.sortDirection ?? 'asc';
+    }
+
     return this.apiService.post<TableDataDto>(
       ServiceUrl.ApiServer,
-      `database/tables/${schema}/${table}`,
+      `database/tables/${encodeURIComponent(schema)}/${encodeURIComponent(table)}`,
       dbConnDto,
+      { params },
     );
   }
 }
