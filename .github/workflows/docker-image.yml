@@ -3,7 +3,7 @@ name: Build and Push Docker Image
 on:
   push:
     branches:
-      - main
+      - release
   workflow_dispatch:
 
 concurrency:
@@ -51,3 +51,75 @@ jobs:
             ghcr.io/${{ env.OWNER_LC }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+  build-local-windows:
+    runs-on: windows-latest
+
+    env:
+      LOCAL_PACKAGE_NAME: SchemaView-local-win-x64
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: src/SchemaView.UI/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: src/SchemaView.UI
+        run: npm ci
+
+      - name: Build frontend
+        working-directory: src/SchemaView.UI
+        run: npm run build -- --configuration=production --base-href=/ --deploy-url=/
+
+      - name: Publish local Windows build
+        shell: pwsh
+        run: |
+          $packageRoot = Join-Path $env:RUNNER_TEMP 'schemaview-local'
+          $publishDir = Join-Path $packageRoot 'publish'
+
+          Remove-Item -LiteralPath $packageRoot -Recurse -Force -ErrorAction SilentlyContinue
+
+          dotnet publish src\SchemaView.API\SchemaView.API.csproj `
+            -c Release `
+            -r win-x64 `
+            --self-contained true `
+            -p:PublishTrimmed=false `
+            -o $publishDir
+
+          $wwwroot = Join-Path $publishDir 'wwwroot'
+          Remove-Item -LiteralPath $wwwroot -Recurse -Force -ErrorAction SilentlyContinue
+          New-Item -ItemType Directory -Path $wwwroot -Force | Out-Null
+          Copy-Item -Path 'src\SchemaView.UI\dist\SchemaView.UI\browser\*' -Destination $wwwroot -Recurse -Force
+
+      - name: Compress local Windows build
+        shell: pwsh
+        run: |
+          $packageRoot = Join-Path $env:RUNNER_TEMP 'schemaview-local'
+          $publishDir = Join-Path $packageRoot 'publish'
+
+          $sevenZip = Join-Path $env:ProgramFiles '7-Zip\7z.exe'
+          if (-not (Test-Path -LiteralPath $sevenZip)) {
+            $sevenZip = (Get-Command 7z.exe -ErrorAction Stop).Source
+          }
+
+          $archive = Join-Path $packageRoot "$env:LOCAL_PACKAGE_NAME.7z"
+          & $sevenZip a -t7z $archive "$publishDir\*" -mx=9 -m0=LZMA2 -mmt=on -ms=on
+
+      - name: Upload local Windows build
+        uses: actions/upload-artifact@v4
+        with:
+          name: SchemaView-local-win-x64-${{ github.sha }}
+          path: ${{ runner.temp }}/schemaview-local/SchemaView-local-win-x64.7z
+          if-no-files-found: error
+          compression-level: 0
