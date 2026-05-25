@@ -1,7 +1,7 @@
 <div
   class="min-h-screen lg:h-screen lg:overflow-hidden bg-surface-50 dark:bg-surface-950 text-color p-4 sm:p-8 font-sans transition-colors duration-200"
 >
-  <div class="max-w-6xl mx-auto h-full flex flex-col min-h-0 gap-6">
+  <div class="max-w-[1920px] mx-auto h-full flex flex-col min-h-0 gap-6">
     <!-- Header -->
     <div
       class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-6 border-b border-surface-200 dark:border-surface-800 shrink-0"
@@ -35,7 +35,7 @@
       <div class="flex items-center gap-3">
         <!-- Refresh Button -->
         <button
-          (click)="loadSchemas()"
+          (click)="loadSchemas(selectedSchema())"
           [disabled]="isLoadingSchemas() || isLoadingTables()"
           class="flex items-center gap-2 px-3.5 py-2 rounded-lg border border-surface-200 dark:border-surface-800 bg-surface-0 dark:bg-surface-900 text-muted-color hover:text-muted-color-emphasis hover:bg-surface-100 dark:hover:bg-surface-800 transition duration-150 focus:outline-none focus:ring-1 focus:ring-primary disabled:opacity-50 cursor-pointer"
           title="Refresh Data"
@@ -91,7 +91,7 @@
     >
       <!-- Schemas Sidebar (Left) -->
       <div
-        class="lg:col-span-4 lg:h-full bg-surface-0 dark:bg-surface-900 border border-surface-200 dark:border-surface-800 rounded-xl shadow-sm overflow-hidden flex flex-col min-h-0"
+        class="lg:col-span-3 lg:h-full bg-surface-0 dark:bg-surface-900 border border-surface-200 dark:border-surface-800 rounded-xl shadow-sm overflow-hidden flex flex-col min-h-0"
       >
         <div class="p-4 border-b border-surface-100 dark:border-surface-800/60 space-y-3 shrink-0">
           <div class="flex items-center justify-between">
@@ -174,7 +174,7 @@
 
       <!-- Tables Content (Right) -->
       <div
-        class="lg:col-span-8 lg:h-full bg-surface-0 dark:bg-surface-900 border border-surface-200 dark:border-surface-800 rounded-xl shadow-sm overflow-hidden flex flex-col min-h-0 min-w-0"
+        class="lg:col-span-9 lg:h-full bg-surface-0 dark:bg-surface-900 border border-surface-200 dark:border-surface-800 rounded-xl shadow-sm overflow-hidden flex flex-col min-h-0 min-w-0"
       >
         @if (selectedTable()) {
           <app-table-data-viewer

@@ -117,8 +117,8 @@ namespace SchemaView.Infrastructure.Services
                         data_type,
                         nullable
                     FROM all_tab_columns
-                    WHERE owner = :schema
-                      AND table_name = :table
+                    WHERE owner = :schema_name
+                      AND table_name = :table_name
                     ORDER BY column_id
                     """;
 
@@ -126,9 +126,15 @@ namespace SchemaView.Infrastructure.Services
 
                 await using (var columnsCommand = new OracleCommand(columnsSql, conn))
                 {
-                    columnsCommand.Parameters.Add(new OracleParameter("schema", schema.ToUpper()));
+                    columnsCommand.BindByName = true;
 
-                    columnsCommand.Parameters.Add(new OracleParameter("table", table.ToUpper()));
+                    columnsCommand.Parameters.Add(
+                        new OracleParameter("schema_name", schema.ToUpperInvariant())
+                    );
+
+                    columnsCommand.Parameters.Add(
+                        new OracleParameter("table_name", table.ToUpperInvariant())
+                    );
 
                     await using var reader = await columnsCommand.ExecuteReaderAsync(
                         cancellationToken
@@ -154,6 +160,11 @@ namespace SchemaView.Infrastructure.Services
                 var orderBySql = sortColumn is null
                     ? string.Empty
                     : $"ORDER BY \"{EscapeIdentifier(sortColumn)}\" {sortDirection}";
+                var selectColumnsSql = string.Join(
+                    ", ",
+                    columns.Select(column => $"\"{EscapeIdentifier(column.Name)}\"")
+                );
+                var rowNumberColumn = ResolveRowNumberColumn(columns);
 
                 // Get total rows
                 var countSql = $"""
@@ -170,20 +181,32 @@ namespace SchemaView.Infrastructure.Services
                     );
                 }
 
-                // Get table data
-                var dataSql = $"""
-                    SELECT *
+                // Get table data. Oracle 11g does not support OFFSET/FETCH, so use ROWNUM paging.
+                var sourceSql = $"""
+                    SELECT {selectColumnsSql}
                     FROM "{EscapeIdentifier(schema)}"."{EscapeIdentifier(table)}"
                     {orderBySql}
-                    OFFSET :offset ROWS FETCH NEXT :limit ROWS ONLY
+                    """;
+
+                var dataSql = $"""
+                    SELECT {selectColumnsSql}
+                    FROM (
+                        SELECT page_query.*, ROWNUM {rowNumberColumn}
+                        FROM (
+                            {sourceSql}
+                        ) page_query
+                        WHERE ROWNUM <= :max_rows
+                    )
+                    WHERE {rowNumberColumn} > :offset_rows
                     """;
 
                 var rows = new List<IReadOnlyDictionary<string, object?>>();
 
                 await using (var dataCommand = new OracleCommand(dataSql, conn))
                 {
-                    dataCommand.Parameters.Add(new OracleParameter("offset", offset));
-                    dataCommand.Parameters.Add(new OracleParameter("limit", limit));
+                    dataCommand.BindByName = true;
+                    dataCommand.Parameters.Add(new OracleParameter("max_rows", offset + limit));
+                    dataCommand.Parameters.Add(new OracleParameter("offset_rows", offset));
 
                     await using (
                         var reader = await dataCommand.ExecuteReaderAsync(cancellationToken)
@@ -247,6 +270,25 @@ namespace SchemaView.Infrastructure.Services
             return string.Equals(sortDirection, "desc", StringComparison.OrdinalIgnoreCase)
                 ? "DESC"
                 : "ASC";
+        }
+
+        private static string ResolveRowNumberColumn(IReadOnlyCollection<ColumnDataDto> columns)
+        {
+            const string baseName = "schema_view_row_num";
+            var name = baseName;
+            var suffix = 1;
+
+            while (
+                columns.Any(column =>
+                    string.Equals(column.Name, name, StringComparison.OrdinalIgnoreCase)
+                )
+            )
+            {
+                name = $"{baseName}_{suffix}";
+                suffix++;
+            }
+
+            return name;
         }
 
         private static string EscapeIdentifier(string identifier)
