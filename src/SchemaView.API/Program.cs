@@ -14,7 +14,6 @@ builder.Services.AddCors(options =>
         }
     );
 });
-
 builder
     .Services.AddControllers()
     .AddJsonOptions(options =>
@@ -25,9 +24,9 @@ builder
     });
 builder.Services.AddOpenApi();
 builder.Services.AddScoped<IConnectionService, ConnectionService>();
+builder.Services.AddScoped<IDatabaseProvider, DatabaseProviderService>();
 builder.Services.AddScoped<PostgreSqlProviderService>();
 builder.Services.AddScoped<OracleProviderService>();
-builder.Services.AddScoped<IDatabaseProvider, DatabaseProviderService>();
 
 var app = builder.Build();
 
