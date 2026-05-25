@@ -1,36 +1,20 @@
 # SchemaView
 
-SchemaView is a lightweight database explorer and data viewer built with ASP.NET
-Core and Angular.
+SchemaView is a lightweight database explorer and data viewer built with
+ASP.NET Core and Angular. It is designed for developer workflows where you need
+to connect to a database, inspect schemas and tables, and view table data
+without opening a heavier administration tool.
 
-The goal of SchemaView is to provide a fast, focused alternative to traditional
-database administration tools for day-to-day development workflows.
+## Features
 
-## Current Status
-
-This repository currently contains the application scaffold:
-
-- ASP.NET Core Web API host
-- Layered backend projects for API, Application, Domain, and Infrastructure
-- Angular frontend application
-- Tailwind CSS frontend styling setup
-- Development OpenAPI support in the API project
-
-Database browsing, provider integrations, and query execution features are
-planned and will be implemented on top of this structure.
-
-## Planned Features
-
-- Runtime database connections
-- PostgreSQL support
-- Schema explorer
-- Table browser
-- Dynamic data viewer
-- Server-side filtering
-- Sorting and pagination
-- Query execution
-- Lazy loading for large schemas and tables
-- Metadata caching
+- Runtime database connection setup
+- Saved browser-side connection profiles
+- PostgreSQL and Oracle connection testing
+- PostgreSQL and Oracle schema browsing
+- Table browsing by schema
+- Paginated table data viewing
+- Column metadata display
+- Server-side sorting support
 - Responsive Angular UI
 - Dark mode support
 
@@ -41,11 +25,15 @@ planned and will be implemented on top of this structure.
 - ASP.NET Core
 - .NET target framework: `net10.0`
 - OpenAPI support via `Microsoft.AspNetCore.OpenApi`
+- Scalar API reference in Development
+- `Npgsql` for PostgreSQL
+- `Oracle.ManagedDataAccess` for Oracle
 
 ### Frontend
 
 - Angular
 - TypeScript
+- PrimeNG
 - Tailwind CSS
 - RxJS
 - Vitest / Angular test builder
@@ -54,32 +42,23 @@ planned and will be implemented on top of this structure.
 
 ```text
 SchemaView/
+|-- Dockerfile
 |-- SchemaView.slnx
-|-- LICENSE
-|-- README.md
+|-- .github/
+|   `-- workflows/
+|       `-- docker-image.yml
 `-- src/
     |-- SchemaView.API/
+    |   |-- Controllers/
     |   |-- Program.cs
-    |   |-- appsettings.json
-    |   |-- appsettings.Development.json
-    |   `-- Properties/
-    |       `-- launchSettings.json
+    |   `-- SchemaView.API.csproj
     |-- SchemaView.Application/
-    |   `-- SchemaView.Application.csproj
     |-- SchemaView.Domain/
-    |   `-- SchemaView.Domain.csproj
     |-- SchemaView.Infrastructure/
-    |   `-- SchemaView.Infrastructure.csproj
     `-- SchemaView.UI/
         |-- angular.json
         |-- package.json
-        |-- package-lock.json
-        |-- public/
         `-- src/
-            |-- index.html
-            |-- main.ts
-            |-- styles.css
-            `-- app/
 ```
 
 ## Architecture
@@ -98,25 +77,14 @@ Infrastructure / Database Provider Layer
 Target Database
 ```
 
-### Backend Projects
-
-- `SchemaView.API` - ASP.NET Core host, HTTP pipeline, controllers, and OpenAPI.
-- `SchemaView.Application` - application services and use-case orchestration.
-- `SchemaView.Domain` - domain models, contracts, and core database explorer concepts.
-- `SchemaView.Infrastructure` - database provider implementations, data access, and external integrations.
-
-### Frontend Project
-
-- `SchemaView.UI` - Angular application for browsing connections, schemas, tables,
-  and query results.
-
 ## Development Setup
 
 ### Prerequisites
 
 - .NET SDK with `net10.0` support
-- Node.js and npm
-- PostgreSQL or another target database once provider support is implemented
+- Node.js 24 or newer
+- npm
+- PostgreSQL or Oracle database for end-to-end testing
 
 ### Restore and Build
 
@@ -131,12 +99,12 @@ dotnet build SchemaView.slnx
 dotnet run --project src/SchemaView.API/SchemaView.API.csproj
 ```
 
-The API development profiles are configured for:
+Development profiles are configured for:
 
 - `http://localhost:5051`
 - `https://localhost:7237`
 
-In Development, the API maps an OpenAPI document.
+In Development, the API maps OpenAPI and Scalar endpoints.
 
 ### Run the Frontend
 
@@ -146,6 +114,8 @@ npm install
 npm start
 ```
 
+The development frontend calls the API at `http://localhost:5051`.
+
 ### Frontend Build and Tests
 
 ```bash
@@ -154,48 +124,94 @@ npm run build
 npm test
 ```
 
-## Database Support Roadmap
+## Local Windows Publish
 
-| Database   | Status  |
-| ---------- | ------- |
-| PostgreSQL | Planned |
-| SQL Server | Planned |
-| MySQL      | Planned |
-| SQLite     | Planned |
+For a local Windows build, publish the API and copy the Angular production build
+into `wwwroot`.
 
-## Design Goals
+```powershell
+cd src\SchemaView.UI
+npm ci
+npm run build -- --configuration=production --base-href=/ --deploy-url=/
 
-- Load faster than heavier database administration tools
-- Handle large databases through lazy loading and pagination
-- Keep the workflow clean and developer-focused
-- Avoid unnecessary administration features and overhead
-- Support multiple database providers over time
+cd ..\..
+dotnet publish src\SchemaView.API\SchemaView.API.csproj `
+  -c Release `
+  -r win-x64 `
+  --self-contained true `
+  -p:PublishTrimmed=false `
+  -o .\publish
 
-## Performance Strategy
+Remove-Item .\publish\wwwroot -Recurse -Force -ErrorAction SilentlyContinue
+New-Item -ItemType Directory -Path .\publish\wwwroot -Force | Out-Null
+Copy-Item src\SchemaView.UI\dist\SchemaView.UI\browser\* .\publish\wwwroot -Recurse -Force
+```
 
-SchemaView is intended to optimize for:
+Run the published app:
 
-- Lazy loading
-- Server-side pagination
-- Virtual scrolling
-- Metadata caching
-- Minimal network payloads
-- Efficient SQL generation
+```powershell
+.\publish\SchemaView.API.exe --urls http://localhost:5000
+```
+
+Do not enable trimmed publish for this app. MVC controllers are discovered via
+reflection, and trimming can remove them from the published assembly. When that
+happens, API calls such as `POST /api/connections/test` fall through to the SPA
+fallback and return `405 Method Not Allowed`.
+
+## GitHub Actions
+
+The workflow in `.github/workflows/docker-image.yml` runs on pushes to the
+`release` branch and can also be started manually with `workflow_dispatch`.
+
+### Docker Image
+
+The `build-and-push` job builds the Docker image and pushes it to GitHub
+Container Registry:
+
+```text
+ghcr.io/<owner>/schemaview:latest
+ghcr.io/<owner>/schemaview:<commit-sha>
+```
+
+### Local Windows Package
+
+The `build-local-windows` job creates a self-contained `win-x64` publish with
+the Angular production build already copied into `wwwroot`.
+
+The published folder is compressed with 7-Zip ultra settings:
+
+```text
+7z a -t7z SchemaView-local-win-x64.7z <publish-folder> -mx=9 -m0=LZMA2 -mmt=on -ms=on
+```
+
+The workflow uploads the package as an Actions artifact named:
+
+```text
+SchemaView-local-win-x64-<commit-sha>
+```
+
+Download the artifact from the completed workflow run, extract the `.7z`, and
+run `SchemaView.API.exe`.
+
+## Database Support
+
+| Database   | Status                |
+| ---------- | --------------------- |
+| PostgreSQL | Supported             |
+| Oracle     | Supported             |
+| SQL Server | Planned               |
+| MySQL      | Planned               |
 
 ## Security Notes
 
-Planned database operations should validate schemas, tables, and columns before
-generating dynamic SQL.
+Connection details are stored in browser local storage. Use this application in
+trusted development environments and avoid storing production credentials in the
+browser.
 
-Raw SQL execution should be limited to trusted development environments and
-should use query limits, pagination, and parameterized execution wherever
-possible.
+Dynamic table access validates selected columns for sorting before generating
+SQL order clauses. Continue to validate schema, table, and column inputs as new
+database features are added.
 
 ## License
 
 SchemaView is licensed under the MIT License. See [LICENSE](LICENSE) for details.
-
-## Vision
-
-SchemaView aims to become a modern, fast, developer-friendly database exploration
-platform focused on productivity and performance.
