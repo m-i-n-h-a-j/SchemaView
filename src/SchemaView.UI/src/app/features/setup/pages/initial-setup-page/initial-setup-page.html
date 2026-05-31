@@ -1,11 +1,11 @@
 <div
-  class="flex flex-col lg:flex-row lg:h-screen lg:overflow-hidden bg-surface-50 dark:bg-surface-950 text-color font-sans transition-colors duration-200 relative"
+  class="flex flex-col lg:flex-row lg:h-screen lg:overflow-hidden bg-surface-container text-color font-sans transition-colors duration-200 relative"
 >
   <!-- Theme Toggle Button -->
   <div class="absolute top-4 right-4 z-50">
     <button
       (click)="themeService.toggleTheme()"
-      class="flex items-center justify-center w-10 h-10 rounded-lg border border-surface-200 dark:border-surface-800 bg-surface-0 dark:bg-surface-900 text-muted-color hover:text-muted-color-emphasis hover:bg-surface-100 dark:hover:bg-surface-800 transition duration-150 focus:outline-none focus:ring-1 focus:ring-primary shadow-sm"
+      class="flex items-center justify-center w-10 h-10 rounded-lg border border-outline-variant bg-surface-container-low text-muted-color hover:text-muted-color-emphasis hover:bg-surface-container-high transition duration-150 focus:outline-none focus:ring-1 focus:ring-primary shadow-sm"
       [title]="themeService.isDark() ? 'Switch to Light Mode' : 'Switch to Dark Mode'"
     >
       <app-icon-component
@@ -18,7 +18,7 @@
   @if (isFirstConnection) {
     <!-- Left onboarding panel -->
     <div
-      class="w-full lg:w-1/2 border-b lg:border-b-0 lg:border-r border-surface-200 dark:border-surface-800 p-8 sm:p-12 lg:p-16 flex flex-col justify-center bg-surface-0 dark:bg-surface-900/30 lg:h-full lg:overflow-y-auto"
+      class="w-full lg:w-1/2 border-b lg:border-b-0 lg:border-r border-outline-variant p-8 sm:p-12 lg:p-16 flex flex-col justify-center bg-surface-container-low lg:h-full lg:overflow-y-auto"
     >
       <div class="max-w-md mx-auto lg:mx-0 space-y-8 py-8 lg:py-0">
         <div>

@@ -3,12 +3,21 @@
 @import 'primeicons/primeicons.css';
 @custom-variant dark (&:where(.dark-selector, .dark-selector *));
 
+.reduce-size {
+  transform: scale(0.8);
+  transform-origin: center;
+}
+
 html {
   font-family: 'Manrope', sans-serif;
 }
 
 .layout-tooltip .p-tooltip-text {
   @apply bg-surface-950 dark:bg-surface-0 text-surface-50 dark:text-surface-950 px-3 py-1.5 rounded-md shadow-lg text-xs;
+}
+
+.text-muted-xs {
+  @apply text-xs text-muted-color font-medium;
 }
 
 .layout-tooltip.p-tooltip-right .p-tooltip-arrow {
@@ -36,7 +45,128 @@ html {
   border-radius: 999px;
 }
 
+@theme {
+  --color-md-primary: var(--md-primary);
+  --color-md-on-primary: var(--md-on-primary);
+  --color-md-primary-container: var(--md-primary-container);
+  --color-md-on-primary-container: var(--md-on-primary-container);
+  --color-md-secondary: var(--md-secondary);
+  --color-md-on-secondary: var(--md-on-secondary);
+  --color-md-secondary-container: var(--md-secondary-container);
+  --color-md-on-secondary-container: var(--md-on-secondary-container);
+  --color-md-tertiary: var(--md-tertiary);
+  --color-md-on-tertiary: var(--md-on-tertiary);
+  --color-md-tertiary-container: var(--md-tertiary-container);
+  --color-md-on-tertiary-container: var(--md-on-tertiary-container);
+  --color-md-error: var(--md-error);
+  --color-md-on-error: var(--md-on-error);
+  --color-md-error-container: var(--md-error-container);
+  --color-md-on-error-container: var(--md-on-error-container);
+
+  --color-primary: var(--md-primary);
+  --color-on-primary: var(--md-on-primary);
+  --color-primary-container: var(--md-primary-container);
+  --color-on-primary-container: var(--md-on-primary-container);
+  --color-secondary: var(--md-secondary);
+  --color-on-secondary: var(--md-on-secondary);
+  --color-secondary-container: var(--md-secondary-container);
+  --color-on-secondary-container: var(--md-on-secondary-container);
+  --color-tertiary: var(--md-tertiary);
+  --color-on-tertiary: var(--md-on-tertiary);
+  --color-tertiary-container: var(--md-tertiary-container);
+  --color-on-tertiary-container: var(--md-on-tertiary-container);
+  --color-background: var(--md-background);
+  --color-background-dark: var(--md-background);
+  --color-on-background: var(--md-on-background);
+  --color-surface: var(--md-surface);
+  --color-surface-dim: var(--md-surface-dim);
+  --color-surface-bright: var(--md-surface-bright);
+  --color-surface-container-lowest: var(--md-surface-container-lowest);
+  --color-surface-container-low: var(--md-surface-container-low);
+  --color-surface-container: var(--md-surface-container);
+  --color-surface-container-high: var(--md-surface-container-high);
+  --color-surface-container-highest: var(--md-surface-container-highest);
+  --color-on-surface: var(--md-on-surface);
+  --color-on-surface-variant: var(--md-on-surface-variant);
+  --color-outline: var(--md-outline);
+  --color-outline-variant: var(--md-outline-variant);
+  --color-error: var(--md-error);
+  --color-error-container: var(--md-error-container);
+  --color-on-error: var(--md-on-error);
+  --color-on-error-container: var(--md-on-error-container);
+  --color-inverse-surface: var(--md-inverse-surface);
+  --color-inverse-on-surface: var(--md-inverse-on-surface);
+  --color-inverse-primary: var(--md-inverse-primary);
+  --color-surface-tint: var(--md-surface-tint);
+  --color-primary-fixed: var(--md-primary-fixed);
+  --color-primary-fixed-dim: var(--md-primary-fixed-dim);
+  --color-on-primary-fixed: var(--md-on-primary-fixed);
+  --color-on-primary-fixed-variant: var(--md-on-primary-fixed-variant);
+  --color-secondary-fixed: var(--md-secondary-fixed);
+  --color-secondary-fixed-dim: var(--md-secondary-fixed-dim);
+  --color-on-secondary-fixed: var(--md-on-secondary-fixed);
+  --color-on-secondary-fixed-variant: var(--md-on-secondary-fixed-variant);
+  --color-tertiary-fixed: var(--md-tertiary-fixed);
+  --color-tertiary-fixed-dim: var(--md-tertiary-fixed-dim);
+  --color-on-tertiary-fixed: var(--md-on-tertiary-fixed);
+  --color-on-tertiary-fixed-variant: var(--md-on-tertiary-fixed-variant);
+
+  --animate-wiggle: wiggle 4s ease-in-out infinite;
+  @keyframes wiggle {
+    0%,
+    100% {
+      transform: rotate(0deg);
+    }
+    50% {
+      transform: rotate(365deg);
+    }
+  }
+}
+
 :root {
+  --md-primary: #003197;
+  --md-on-primary: #ffffff;
+  --md-primary-container: #d8e2ff;
+  --md-on-primary-container: #001a41;
+  --md-secondary: #555f71;
+  --md-on-secondary: #ffffff;
+  --md-tertiary: #6f5675;
+  --md-on-tertiary: #ffffff;
+  --md-error: #ba1a1a;
+  --md-on-error: #ffffff;
+  --md-surface: #fbf8ff;
+  --md-background: #fbf8ff;
+  --md-on-surface: #1b1b21;
+  --md-on-background: #1b1b21;
+  --md-on-surface-variant: #45464f;
+  --md-surface-container: #efedf4;
+  --md-surface-container-high: #e9e7ef;
+  --md-outline: #757680;
+  --md-outline-variant: #c5c6d0;
+  --on-surface: var(--md-on-surface);
   --ng-progress-color: var(--p-primary-color);
   --ng-progress-thickness: 3;
+}
+
+body {
+  background: var(--md-background);
+  color: var(--md-on-background);
+  transition:
+    background-color 150ms ease,
+    color 150ms ease;
+}
+
+.page-enter {
+  animation: slideUp 200ms ease-out forwards;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
